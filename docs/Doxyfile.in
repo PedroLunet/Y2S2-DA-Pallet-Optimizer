@@ -1,0 +1,20 @@
+# Doxyfile configuration
+PROJECT_NAME           = "Pallet Packing Optimization Tool"
+PROJECT_BRIEF          = "Implementation of algorithms for the Delivery Truck Pallet Packing Optimization Problem"
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/doxygen
+CREATE_SUBDIRS         = YES
+BUILTIN_STL_SUPPORT    = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+WARN_NO_PARAMDOC       = YES
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/README.md
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+HAVE_DOT               = YES
+UML_LOOK               = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
