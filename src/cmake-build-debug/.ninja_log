@@ -1,0 +1,13 @@
+# ninja log v6
+2	387	1747694921382499750	CMakeFiles/project2_da_leic.dir/optimizer/DataHandler.cpp.o	6bff4d054bfacc2a
+2	252	1747694921381530256	CMakeFiles/project2_da_leic.dir/menu/Menu.cpp.o	4c18aac303785a94
+113	160	1747694962582951794	project2_da_leic	8bbd3408b2350e34
+1	113	1747694962470950648	CMakeFiles/project2_da_leic.dir/optimizer/PalletPackingOptimizer.cpp.o	84e141e54d952896
+1	276	1747694921380530246	CMakeFiles/project2_da_leic.dir/main.cpp.o	692c6ce5a1004637
+2	92	1747695359603003862	build.ninja	da9948df9c24c3d4
+1	30	1747695359603003862	build.ninja	da9948df9c24c3d4
+2	128	1747695359609149999	CMakeFiles/project2_da_leic.dir/optimizer/PalletPackingOptimizer.cpp.o	84e141e54d952896
+2	217	1747695359608076358	CMakeFiles/project2_da_leic.dir/menu/Menu.cpp.o	4c18aac303785a94
+1	232	1747695359607076348	CMakeFiles/project2_da_leic.dir/main.cpp.o	692c6ce5a1004637
+2	317	1747695359609386509	CMakeFiles/project2_da_leic.dir/data/DataManager.cpp.o	f8493a9252a13028
+317	355	1747695359923079648	project2_da_leic	f7d14caf35b1368f

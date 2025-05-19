@@ -1,0 +1,4 @@
+/home/pedromonteiro/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/pedromonteiro/.local/share/JetBrains/Toolbox/apps/clion/bin/ninja/linux/x64/ninja -G Ninja -S "/home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src" -B "/home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/cmake-build-debug"
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/cmake-build-debug
