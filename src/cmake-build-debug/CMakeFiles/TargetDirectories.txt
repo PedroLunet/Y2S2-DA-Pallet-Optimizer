@@ -1,4 +1,0 @@
-/home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/cmake-build-debug/CMakeFiles/project2_da_leic.dir
-/home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/cmake-build-debug/CMakeFiles/docs.dir
-/home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
