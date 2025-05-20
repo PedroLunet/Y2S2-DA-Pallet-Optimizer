@@ -187,3 +187,116 @@ void PalletPackingOptimizer::backtrack(
     backtrack(pallets, n, curIndex + 1, maxWeight, curProfit,
               curPallets, maxProfit, usedPallets);
 }
+
+Solution PalletPackingOptimizer::solveDynamicProgramming()
+{
+    Solution solution;
+    solution.algorithmName = "Dynamic Programming";
+
+    const std::vector<Pallet> &pallets = getPallets();
+    int capacity = getTruckCapacity();
+    int n = pallets.size();
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    std::vector<std::vector<std::pair<int, int>>> dp(n, std::vector<std::pair<int, int>>(capacity + 1, {0, 0}));
+
+    for (int w = 0; w <= capacity; w++)
+    {
+        if (w >= pallets[0].weight)
+        {
+            dp[0][w] = {pallets[0].profit, 1};
+        }
+        else
+        {
+            dp[0][w] = {0, 0};
+        }
+    }
+
+    for (int i = 1; i < n; i++)
+    {
+        for (int w = 0; w <= capacity; w++)
+        {
+            if (pallets[i].weight > w)
+            {
+                dp[i][w] = dp[i - 1][w];
+            }
+            else
+            {
+                int newProfit = dp[i - 1][w - pallets[i].weight].first + pallets[i].profit;
+                int newCount = dp[i - 1][w - pallets[i].weight].second + 1;
+
+                int prevProfit = dp[i - 1][w].first;
+                int prevCount = dp[i - 1][w].second;
+
+                if (newProfit > prevProfit ||
+                    (newProfit == prevProfit && newCount < prevCount))
+                {
+                    dp[i][w] = {newProfit, newCount};
+                }
+                else
+                {
+                    dp[i][w] = {prevProfit, prevCount};
+                }
+            }
+        }
+    }
+
+    std::vector<bool> usedPallets(n, false);
+    int remainingCapacity = capacity;
+
+    int i = n - 1;
+    int totalProfit = dp[i][remainingCapacity].first;
+    int palletCount = dp[i][remainingCapacity].second;
+
+    while (i >= 0 && remainingCapacity > 0)
+    {
+        if (i == 0)
+        {
+            if (remainingCapacity >= pallets[0].weight && dp[0][remainingCapacity].first > 0)
+            {
+                usedPallets[0] = true;
+            }
+            break;
+        }
+
+        if (dp[i][remainingCapacity].first != dp[i - 1][remainingCapacity].first ||
+            (dp[i][remainingCapacity].first == dp[i - 1][remainingCapacity].first &&
+             dp[i][remainingCapacity].second < dp[i - 1][remainingCapacity].second))
+        {
+            usedPallets[i] = true;
+            remainingCapacity -= pallets[i].weight;
+        }
+
+        i--;
+    }
+
+    std::vector<int> selectedPalletIds;
+    int totalWeight = 0;
+    int actualPalletCount = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        if (usedPallets[i])
+        {
+            selectedPalletIds.push_back(pallets[i].id);
+            totalWeight += pallets[i].weight;
+            actualPalletCount++;
+        }
+    }
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+    solution.totalProfit = totalProfit;
+    solution.totalWeight = totalWeight;
+    solution.selectedPallets = selectedPalletIds;
+    solution.executionTime = duration.count();
+
+    std::cout << "Dynamic Programming Analysis:" << std::endl;
+    std::cout << "Time complexity: O(n*W) where n = " << n << " and W = " << capacity << std::endl;
+    std::cout << "Space complexity: O(n*W) = " << n << "*" << capacity << " = " << n * capacity << std::endl;
+    std::cout << "Optimal profit: " << totalProfit << " with " << actualPalletCount << " pallets" << std::endl;
+
+    return solution;
+}
