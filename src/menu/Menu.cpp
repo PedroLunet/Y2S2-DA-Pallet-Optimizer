@@ -3,6 +3,7 @@
 #include <iostream>
 #include <limits>
 #include <thread>
+#include <iomanip>
 
 Menu::Menu() = default;
 
@@ -117,16 +118,188 @@ void Menu::optionPicker()
     break;
 
     case 5:
-        std::cout << "Greedy Approximation algorithm not implemented yet." << std::endl;
-        break;
+    {
+        if (optimizer.getCurrentDataset().empty())
+        {
+            std::cerr << "\nPlease load a dataset first." << std::endl;
+            break;
+        }
+
+        int subOption;
+        std::cout << "\nSelect approximation algorithm:" << std::endl;
+        std::cout << "1. Greedy-A (by Profit/Weight Ratio)" << std::endl;
+        std::cout << "2. Greedy-B (by Profit Value)" << std::endl;
+        std::cout << "3. Combined Approximation (Max of both)" << std::endl;
+        std::cout << "4. Compare with Optimal Solution" << std::endl;
+        std::cout << "Option: ";
+
+        std::cin >> subOption;
+
+        switch (subOption)
+        {
+        case 1:
+            std::cout << "\nSolving using Greedy-A (Profit/Weight Ratio)...\n"
+                      << std::endl;
+            displaySolution(optimizer.solveGreedyA());
+            break;
+
+        case 2:
+            std::cout << "\nSolving using Greedy-B (Profit Value)...\n"
+                      << std::endl;
+            displaySolution(optimizer.solveGreedyB());
+            break;
+
+        case 3:
+            std::cout << "\nSolving using Combined Approximation...\n"
+                      << std::endl;
+            displaySolution(optimizer.solveApproximation());
+            break;
+
+        case 4:
+        {
+            std::cout << "\nComparing approximation with optimal solution...\n"
+                      << std::endl;
+
+            if (optimizer.getPallets().size() > 30)
+            {
+                std::cout << "Using Dynamic Programming for optimal solution...\n"
+                          << std::endl;
+                Solution optimalSolution = optimizer.solveDynamicProgramming();
+                Solution approxSolution = optimizer.solveApproximation();
+
+                displaySolution(optimalSolution);
+                std::cout << "\n";
+                displaySolution(approxSolution);
+
+                std::cout << "\nComparison Results:\n"
+                          << std::endl;
+                std::cout << optimizer.compareWithOptimal(approxSolution, optimalSolution) << std::endl;
+            }
+            else
+            {
+                std::cout << "Using Exact algorithms for optimal solutions...\n"
+                          << std::endl;
+
+                Solution optimalSolution = optimizer.solveBacktracking();
+                Solution approxSolution = optimizer.solveApproximation();
+                Solution greedyASolution = optimizer.solveGreedyA();
+                Solution greedyBSolution = optimizer.solveGreedyB();
+
+                displaySolution(optimalSolution);
+                std::cout << "\n";
+
+                std::cout << "Comparison for Greedy-A:\n";
+                std::cout << optimizer.compareWithOptimal(greedyASolution, optimalSolution) << std::endl;
+
+                std::cout << "Comparison for Greedy-B:\n";
+                std::cout << optimizer.compareWithOptimal(greedyBSolution, optimalSolution) << std::endl;
+
+                std::cout << "Comparison for Combined Approximation:\n";
+                std::cout << optimizer.compareWithOptimal(approxSolution, optimalSolution) << std::endl;
+            }
+            break;
+        }
+
+        default:
+            std::cout << "Invalid option." << std::endl;
+        }
+    }
+    break;
 
     case 6:
         std::cout << "Integer Linear Programming algorithm not implemented yet." << std::endl;
         break;
 
     case 7:
-        std::cout << "Algorithm comparison not implemented yet." << std::endl;
-        break;
+    {
+        if (optimizer.getCurrentDataset().empty())
+        {
+            std::cerr << "\nPlease load a dataset first." << std::endl;
+            break;
+        }
+
+        std::cout << "\nComparing all algorithms...\n"
+                  << std::endl;
+
+        Solution dpSolution, greedyA, greedyB, approx;
+        bool useExact = optimizer.getPallets().size() <= 30;
+        Solution exactSolution;
+
+        std::cout << "Running Dynamic Programming algorithm..." << std::endl;
+        dpSolution = optimizer.solveDynamicProgramming();
+
+        if (useExact)
+        {
+            std::cout << "Running Backtracking algorithm..." << std::endl;
+            exactSolution = optimizer.solveBacktracking();
+        }
+
+        std::cout << "Running Greedy-A algorithm..." << std::endl;
+        greedyA = optimizer.solveGreedyA();
+
+        std::cout << "Running Greedy-B algorithm..." << std::endl;
+        greedyB = optimizer.solveGreedyB();
+
+        std::cout << "Running Approximation algorithm..." << std::endl;
+        approx = optimizer.solveApproximation();
+
+        std::cout << "\n============================================= Algorithm Comparison =============================================" << std::endl;
+        std::cout << std::left << std::setw(50) << "Algorithm"
+                  << std::setw(15) << "Total Profit"
+                  << std::setw(15) << "Total Weight"
+                  << std::setw(20) << "Execution Time (ms)"
+                  << std::setw(15) << "Pallets Used" << std::endl;
+        std::cout << "----------------------------------------------------------------------------------------------------------------" << std::endl;
+
+        if (useExact)
+        {
+            std::cout << std::left << std::setw(50) << exactSolution.algorithmName
+                      << std::setw(15) << exactSolution.totalProfit
+                      << std::setw(15) << exactSolution.totalWeight
+                      << std::setw(20) << exactSolution.executionTime
+                      << std::setw(15) << exactSolution.selectedPallets.size() << std::endl;
+        }
+
+        std::cout << std::left << std::setw(50) << dpSolution.algorithmName
+                  << std::setw(15) << dpSolution.totalProfit
+                  << std::setw(15) << dpSolution.totalWeight
+                  << std::setw(20) << dpSolution.executionTime
+                  << std::setw(15) << dpSolution.selectedPallets.size() << std::endl;
+
+        std::cout << std::left << std::setw(50) << greedyA.algorithmName
+                  << std::setw(15) << greedyA.totalProfit
+                  << std::setw(15) << greedyA.totalWeight
+                  << std::setw(20) << greedyA.executionTime
+                  << std::setw(15) << greedyA.selectedPallets.size() << std::endl;
+
+        std::cout << std::left << std::setw(50) << greedyB.algorithmName
+                  << std::setw(15) << greedyB.totalProfit
+                  << std::setw(15) << greedyB.totalWeight
+                  << std::setw(20) << greedyB.executionTime
+                  << std::setw(15) << greedyB.selectedPallets.size() << std::endl;
+
+        std::cout << std::left << std::setw(50) << approx.algorithmName
+                  << std::setw(15) << approx.totalProfit
+                  << std::setw(15) << approx.totalWeight
+                  << std::setw(20) << approx.executionTime
+                  << std::setw(15) << approx.selectedPallets.size() << std::endl;
+
+        std::cout << "================================================================================================================" << std::endl;
+
+        Solution &optimalSolution = useExact ? exactSolution : dpSolution;
+        std::cout << "\n================== Approximation Accuracy =================" << std::endl;
+
+        double greedyAAccuracy = static_cast<double>(greedyA.totalProfit) / optimalSolution.totalProfit * 100.0;
+        double greedyBAccuracy = static_cast<double>(greedyB.totalProfit) / optimalSolution.totalProfit * 100.0;
+        double approxAccuracy = static_cast<double>(approx.totalProfit) / optimalSolution.totalProfit * 100.0;
+
+        std::cout << "Greedy-A accuracy: " << greedyAAccuracy << "%" << std::endl;
+        std::cout << "Greedy-B accuracy: " << greedyBAccuracy << "%" << std::endl;
+        std::cout << "Approximation accuracy: " << approxAccuracy << "%" << std::endl;
+
+        std::cout << "===========================================================" << std::endl;
+    }
+    break;
 
     case 8:
         std::cout << "Exiting the program. Goodbye!" << std::endl;
