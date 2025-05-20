@@ -1,0 +1,20 @@
+# Doxyfile configuration
+PROJECT_NAME           = "Pallet Packing Optimization Tool"
+PROJECT_BRIEF          = "Implementation of algorithms for the Delivery Truck Pallet Packing Optimization Problem"
+OUTPUT_DIRECTORY       = /home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/cmake-build-debug/doxygen
+CREATE_SUBDIRS         = YES
+BUILTIN_STL_SUPPORT    = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+WARN_NO_PARAMDOC       = YES
+INPUT                  = /home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = /home/pedromonteiro/University/2º Ano/2º Semestre/DA/project2-da-leic/src/README.md
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+HAVE_DOT               = YES
+UML_LOOK               = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
