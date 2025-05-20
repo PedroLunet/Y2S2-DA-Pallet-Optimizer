@@ -6,7 +6,7 @@
 Solution PalletPackingOptimizer::solveBruteForce()
 {
     Solution solution;
-    solution.algorithmName = "Brute Force (Exhaustive Search)";
+    solution.algorithmName = "Brute Force - O(2^n)";
 
     const std::vector<Pallet> &pallets = getPallets();
     int capacity = getTruckCapacity();
@@ -89,19 +89,13 @@ Solution PalletPackingOptimizer::solveBruteForce()
     solution.totalWeight = bestWeight;
     solution.selectedPallets = selectedPalletIds;
     solution.executionTime = duration.count();
-
-    std::cout << "Brute Force Analysis:" << std::endl;
-    std::cout << "Total combinations explored: " << totalCombinations << std::endl;
-    std::cout << "Time complexity: O(2^n) where n = " << n << std::endl;
-    std::cout << "For larger datasets, this algorithm becomes impractical." << std::endl;
-
     return solution;
 }
 
 Solution PalletPackingOptimizer::solveBacktracking()
 {
     Solution solution;
-    solution.algorithmName = "Backtracking";
+    solution.algorithmName = "Backtracking - O(2^n)";
 
     const std::vector<Pallet> &pallets = getPallets();
     int capacity = getTruckCapacity();
@@ -191,7 +185,7 @@ void PalletPackingOptimizer::backtrack(
 Solution PalletPackingOptimizer::solveDynamicProgramming()
 {
     Solution solution;
-    solution.algorithmName = "Dynamic Programming";
+    solution.algorithmName = "Dynamic Programming - O(n*W)";
 
     const std::vector<Pallet> &pallets = getPallets();
     int capacity = getTruckCapacity();
@@ -292,11 +286,6 @@ Solution PalletPackingOptimizer::solveDynamicProgramming()
     solution.totalWeight = totalWeight;
     solution.selectedPallets = selectedPalletIds;
     solution.executionTime = duration.count();
-
-    std::cout << "Dynamic Programming Analysis:" << std::endl;
-    std::cout << "Time complexity: O(n*W) where n = " << n << " and W = " << capacity << std::endl;
-    std::cout << "Space complexity: O(n*W) = " << n << "*" << capacity << " = " << n * capacity << std::endl;
-    std::cout << "Optimal profit: " << totalProfit << " with " << actualPalletCount << " pallets" << std::endl;
 
     return solution;
 }
