@@ -103,8 +103,18 @@ void Menu::optionPicker()
     break;
 
     case 4:
-        std::cout << "Dynamic Programming algorithm not implemented yet." << std::endl;
-        break;
+    {
+        if (optimizer.getCurrentDataset().empty())
+        {
+            std::cerr << "\nPlease load a dataset first." << std::endl;
+            break;
+        }
+        std::cout << "\nSolving using Dynamic Programming...\n"
+                  << std::endl;
+        Solution solution = optimizer.solveDynamicProgramming();
+        displaySolution(solution);
+    }
+    break;
 
     case 5:
         std::cout << "Greedy Approximation algorithm not implemented yet." << std::endl;

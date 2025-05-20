@@ -88,6 +88,14 @@ public:
      */
     Solution solveBacktracking();
 
+    /**
+     * @brief Solves the pallet packing problem using dynamic programming approach
+     * @return Solution structure containing the results
+     * @time_complexity O(n*W) where n is the number of pallets and W is the weight capacity
+     * @space_complexity O(n*W) for the DP table
+     */
+    Solution solveDynamicProgramming();
+
 private:
     /**
      * @brief Helper function for the backtracking algorithm
