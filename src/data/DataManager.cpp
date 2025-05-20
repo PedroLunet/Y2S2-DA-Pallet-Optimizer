@@ -5,7 +5,6 @@
 #include <iostream>
 #include <sstream>
 
-// Initialize static instance pointer
 DataManager *DataManager::instance = nullptr;
 
 bool DataManager::readTruckData(const std::string &filename)
@@ -13,20 +12,17 @@ bool DataManager::readTruckData(const std::string &filename)
     std::ifstream file(filename);
     if (!file.is_open())
     {
-        std::cerr << "Error opening file: " << filename << std::endl;
+        std::cerr << "\nError opening file: " << filename << std::endl;
         return false;
     }
 
     std::string line;
-    // Skip header line
     std::getline(file, line);
 
-    // Read capacity and number of pallets
     std::getline(file, line);
     std::stringstream ss(line);
     std::string capacityStr, palletsCountStr;
 
-    // Return to main menu after processing any option (except exit)
     std::getline(ss, capacityStr, ',');
     std::getline(ss, palletsCountStr, ',');
 
@@ -42,16 +38,14 @@ bool DataManager::readPalletsData(const std::string &filename)
     std::ifstream file(filename);
     if (!file.is_open())
     {
-        std::cerr << "Error opening file: " << filename << std::endl;
+        std::cerr << "\nError opening file: " << filename << std::endl;
         return false;
     }
 
     pallets.clear();
     std::string line;
-    // Skip header line
     std::getline(file, line);
 
-    // Read each pallet data
     while (std::getline(file, line))
     {
         std::stringstream ss(line);
@@ -90,13 +84,12 @@ bool DataManager::loadDataset(const std::string &datasetNumber)
 
     currentDataset = datasetNumber;
 
-    // Print a summary of the loaded data
-    std::cout << "\n--- Dataset " << datasetNumber << " Summary ---" << std::endl;
+    std::cout << "\n==============================" << std::endl;
+    std::cout << "--- Dataset " << datasetNumber << " Summary ---" << std::endl;
     std::cout << "Truck Capacity: " << truckCapacity << std::endl;
     std::cout << "Number of Pallets: " << pallets.size() << std::endl;
     std::cout << "First few pallets:" << std::endl;
 
-    // Print the first few pallets (up to 5)
     int count = 0;
     std::cout << std::left << std::setw(10) << "ID"
               << std::setw(10) << "Weight"
@@ -106,7 +99,7 @@ bool DataManager::loadDataset(const std::string &datasetNumber)
     for (const auto &pallet : pallets)
     {
         if (count >= 5)
-            break; // Only show the first 5 pallets
+            break;
         std::cout << std::left << std::setw(10) << pallet.id
                   << std::setw(10) << pallet.weight
                   << std::setw(10) << pallet.profit << std::endl;
@@ -117,6 +110,7 @@ bool DataManager::loadDataset(const std::string &datasetNumber)
     {
         std::cout << "... and " << pallets.size() - 5 << " more pallets" << std::endl;
     }
+    std::cout << "==============================" << std::endl;
 
     return true;
 }
@@ -129,7 +123,7 @@ void DataManager::displayDatasetInfo() const
         return;
     }
 
-    std::cout << "Dataset: " << currentDataset << std::endl;
+    std::cout << "\nDataset: " << currentDataset << std::endl;
     std::cout << "Truck Capacity: " << truckCapacity << std::endl;
     std::cout << "Number of Pallets: " << pallets.size() << std::endl;
 

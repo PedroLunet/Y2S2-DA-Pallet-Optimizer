@@ -10,6 +10,12 @@ class Menu
     PalletPackingOptimizer optimizer;
     std::string datasetNumber;
 
+    /**
+     * @brief Displays the solution to the knapsack problem
+     * @param solution The solution to display
+     */
+    void displaySolution(const Solution &solution);
+
 public:
     Menu();
 
