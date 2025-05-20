@@ -199,17 +199,17 @@ Solution PalletPackingOptimizer::solveDynamicProgramming()
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    std::vector<std::vector<int>> maxValue(n, std::vector<int>(capacity + 1, 0));
+    std::vector<std::vector<std::pair<int, int>>> dp(n, std::vector<std::pair<int, int>>(capacity + 1, {0, 0}));
 
     for (int w = 0; w <= capacity; w++)
     {
         if (w >= pallets[0].weight)
         {
-            maxValue[0][w] = pallets[0].profit;
+            dp[0][w] = {pallets[0].profit, 1};
         }
         else
         {
-            maxValue[0][w] = 0;
+            dp[0][w] = {0, 0};
         }
     }
 
@@ -219,13 +219,25 @@ Solution PalletPackingOptimizer::solveDynamicProgramming()
         {
             if (pallets[i].weight > w)
             {
-                maxValue[i][w] = maxValue[i - 1][w];
+                dp[i][w] = dp[i - 1][w];
             }
             else
             {
-                int valueWithCurrentPallet = maxValue[i - 1][w - pallets[i].weight] + pallets[i].profit;
-                int valueWithoutCurrentPallet = maxValue[i - 1][w];
-                maxValue[i][w] = std::max(valueWithCurrentPallet, valueWithoutCurrentPallet);
+                int newProfit = dp[i - 1][w - pallets[i].weight].first + pallets[i].profit;
+                int newCount = dp[i - 1][w - pallets[i].weight].second + 1;
+
+                int prevProfit = dp[i - 1][w].first;
+                int prevCount = dp[i - 1][w].second;
+
+                if (newProfit > prevProfit ||
+                    (newProfit == prevProfit && newCount < prevCount))
+                {
+                    dp[i][w] = {newProfit, newCount};
+                }
+                else
+                {
+                    dp[i][w] = {prevProfit, prevCount};
+                }
             }
         }
     }
@@ -233,23 +245,35 @@ Solution PalletPackingOptimizer::solveDynamicProgramming()
     std::vector<bool> usedPallets(n, false);
     int remainingCapacity = capacity;
 
-    for (int i = n - 1; i > 0; i--)
+    int i = n - 1;
+    int totalProfit = dp[i][remainingCapacity].first;
+    int palletCount = dp[i][remainingCapacity].second;
+
+    while (i >= 0 && remainingCapacity > 0)
     {
-        if (maxValue[i][remainingCapacity] != maxValue[i - 1][remainingCapacity])
+        if (i == 0)
+        {
+            if (remainingCapacity >= pallets[0].weight && dp[0][remainingCapacity].first > 0)
+            {
+                usedPallets[0] = true;
+            }
+            break;
+        }
+
+        if (dp[i][remainingCapacity].first != dp[i - 1][remainingCapacity].first ||
+            (dp[i][remainingCapacity].first == dp[i - 1][remainingCapacity].first &&
+             dp[i][remainingCapacity].second < dp[i - 1][remainingCapacity].second))
         {
             usedPallets[i] = true;
             remainingCapacity -= pallets[i].weight;
         }
-    }
 
-    if (remainingCapacity >= pallets[0].weight && maxValue[0][remainingCapacity] == pallets[0].profit)
-    {
-        usedPallets[0] = true;
+        i--;
     }
 
     std::vector<int> selectedPalletIds;
     int totalWeight = 0;
-    int totalProfit = 0;
+    int actualPalletCount = 0;
 
     for (int i = 0; i < n; i++)
     {
@@ -257,7 +281,7 @@ Solution PalletPackingOptimizer::solveDynamicProgramming()
         {
             selectedPalletIds.push_back(pallets[i].id);
             totalWeight += pallets[i].weight;
-            totalProfit += pallets[i].profit;
+            actualPalletCount++;
         }
     }
 
@@ -272,7 +296,7 @@ Solution PalletPackingOptimizer::solveDynamicProgramming()
     std::cout << "Dynamic Programming Analysis:" << std::endl;
     std::cout << "Time complexity: O(n*W) where n = " << n << " and W = " << capacity << std::endl;
     std::cout << "Space complexity: O(n*W) = " << n << "*" << capacity << " = " << n * capacity << std::endl;
-    std::cout << "Optimal profit: " << totalProfit << " with " << selectedPalletIds.size() << " pallets" << std::endl;
+    std::cout << "Optimal profit: " << totalProfit << " with " << actualPalletCount << " pallets" << std::endl;
 
     return solution;
 }
