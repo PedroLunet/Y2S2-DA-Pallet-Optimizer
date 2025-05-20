@@ -81,7 +81,8 @@ void Menu::optionPicker()
             std::cout.flush();
             break;
         }
-        std::cout << "\nSolving using Brute Force...\n" << std::endl;
+        std::cout << "\nSolving using Brute Force...\n"
+                  << std::endl;
         Solution solution = optimizer.solveBruteForce();
         displaySolution(solution);
     }
@@ -132,7 +133,7 @@ void Menu::optionPicker()
 
     std::cout.flush();
 
-    const std::chrono::seconds dura( 1);
+    const std::chrono::seconds dura(1);
 
     std::this_thread::sleep_for(dura);
 
@@ -147,15 +148,20 @@ void Menu::displaySolution(const Solution &solution)
     std::cout << "Total Profit: " << solution.totalProfit << std::endl;
     std::cout << "Total Weight: " << solution.totalWeight << std::endl;
 
-    std::cout << "Selected Pallets: ";
-    for (size_t i = 0; i < solution.selectedPallets.size(); ++i)
+    std::cout << "Selected Pallets:" << std::endl;
+
+    const std::vector<Pallet> &pallets = optimizer.getPallets();
+
+    for (const int &palletId : solution.selectedPallets)
     {
-        std::cout << solution.selectedPallets[i];
-        if (i < solution.selectedPallets.size() - 1)
+        for (const auto &pallet : pallets)
         {
-            std::cout << ", ";
+            if (pallet.id == palletId)
+            {
+                std::cout << palletId << ", " << pallet.weight << ", " << pallet.profit << std::endl;
+                break;
+            }
         }
     }
-    std::cout << std::endl;
     std::cout << "==============================" << std::endl;
 }
