@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <set>
+#include <sstream>
 
 /**
  * @brief Structure to represent a solution to the knapsack problem
@@ -95,6 +97,39 @@ public:
      * @space_complexity O(n*W) for the DP table
      */
     Solution solveDynamicProgramming();
+
+    /**
+     * @brief Solves the pallet packing problem using a greedy approach based on profit-to-weight ratio
+     * @return Solution structure containing the results
+     * @time_complexity O(n log n) due to sorting
+     * @space_complexity O(n) for storing the solution
+     */
+    Solution solveGreedyA();
+
+    /**
+     * @brief Solves the pallet packing problem using a greedy approach based on profit value
+     * @return Solution structure containing the results
+     * @time_complexity O(n log n) due to sorting
+     * @space_complexity O(n) for storing the solution
+     */
+    Solution solveGreedyB();
+
+    /**
+     * @brief Solves the pallet packing problem using an approximation algorithm
+     * that returns the maximum result of both greedy approaches
+     * @return Solution structure containing the results
+     * @time_complexity O(n log n) due to sorting
+     * @space_complexity O(n) for storing the solution
+     */
+    Solution solveApproximation();
+
+    /**
+     * @brief Compares the approximation algorithm with optimal solutions
+     * @param approximationSolution The solution from the approximation algorithm
+     * @param optimalSolution The optimal solution (from DP or Brute Force)
+     * @return A string with comparison metrics (accuracy, performance)
+     */
+    std::string compareWithOptimal(const Solution &approximationSolution, const Solution &optimalSolution);
 
 private:
     /**

@@ -125,8 +125,6 @@ Solution PalletPackingOptimizer::solveBacktracking()
         }
     }
 
-    std::cout << "Backtracking found optimal solution with " << palletCount << " pallets for maximum profit of " << bestProfit << std::endl;
-
     solution.totalProfit = bestProfit;
     solution.totalWeight = bestWeight;
     solution.selectedPallets = bestSelection;
@@ -288,4 +286,166 @@ Solution PalletPackingOptimizer::solveDynamicProgramming()
     solution.executionTime = duration.count();
 
     return solution;
+}
+
+Solution PalletPackingOptimizer::solveGreedyA()
+{
+    Solution solution;
+    solution.algorithmName = "Greedy-A (By Profit/Weight Ratio) - O(n log n)";
+
+    const std::vector<Pallet> &pallets = getPallets();
+    int capacity = getTruckCapacity();
+    int n = pallets.size();
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    std::vector<std::pair<int, Pallet>> indexedPallets;
+    for (int i = 0; i < n; i++)
+    {
+        indexedPallets.push_back({i, pallets[i]});
+    }
+
+    std::sort(indexedPallets.begin(), indexedPallets.end(),
+              [](const std::pair<int, Pallet> &a, const std::pair<int, Pallet> &b)
+              {
+                  double ratioA = static_cast<double>(a.second.profit) / a.second.weight;
+                  double ratioB = static_cast<double>(b.second.profit) / b.second.weight;
+                  return ratioA > ratioB;
+              });
+
+    int totalWeight = 0;
+    int totalProfit = 0;
+    std::vector<int> selectedPalletIds;
+
+    for (const auto &indexedPallet : indexedPallets)
+    {
+        const Pallet &pallet = indexedPallet.second;
+
+        if (totalWeight + pallet.weight <= capacity)
+        {
+            totalWeight += pallet.weight;
+            totalProfit += pallet.profit;
+            selectedPalletIds.push_back(pallet.id);
+        }
+    }
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+    solution.totalProfit = totalProfit;
+    solution.totalWeight = totalWeight;
+    solution.selectedPallets = selectedPalletIds;
+    solution.executionTime = duration.count();
+
+    return solution;
+}
+
+Solution PalletPackingOptimizer::solveGreedyB()
+{
+    Solution solution;
+    solution.algorithmName = "Greedy-B (By Profit) - O(n log n)";
+
+    const std::vector<Pallet> &pallets = getPallets();
+    int capacity = getTruckCapacity();
+    int n = pallets.size();
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    std::vector<std::pair<int, Pallet>> indexedPallets;
+    for (int i = 0; i < n; i++)
+    {
+        indexedPallets.push_back({i, pallets[i]});
+    }
+
+    std::sort(indexedPallets.begin(), indexedPallets.end(),
+              [](const std::pair<int, Pallet> &a, const std::pair<int, Pallet> &b)
+              {
+                  return a.second.profit > b.second.profit;
+              });
+
+    int totalWeight = 0;
+    int totalProfit = 0;
+    std::vector<int> selectedPalletIds;
+
+    for (const auto &indexedPallet : indexedPallets)
+    {
+        const Pallet &pallet = indexedPallet.second;
+
+        if (totalWeight + pallet.weight <= capacity)
+        {
+            totalWeight += pallet.weight;
+            totalProfit += pallet.profit;
+            selectedPalletIds.push_back(pallet.id);
+        }
+    }
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+    solution.totalProfit = totalProfit;
+    solution.totalWeight = totalWeight;
+    solution.selectedPallets = selectedPalletIds;
+    solution.executionTime = duration.count();
+
+    return solution;
+}
+
+Solution PalletPackingOptimizer::solveApproximation()
+{
+    Solution solution;
+    solution.algorithmName = "Approximation (Max of Greedy-A and Greedy-B)";
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    Solution greedyA = solveGreedyA();
+    Solution greedyB = solveGreedyB();
+
+    Solution &bestSolution = (greedyA.totalProfit >= greedyB.totalProfit) ? greedyA : greedyB;
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+    solution.totalProfit = bestSolution.totalProfit;
+    solution.totalWeight = bestSolution.totalWeight;
+    solution.selectedPallets = bestSolution.selectedPallets;
+    solution.executionTime = duration.count();
+    solution.algorithmName = "Approximation (Max of " +
+                             std::string((bestSolution.totalProfit == greedyA.totalProfit) ? "Greedy-A" : "Greedy-B") +
+                             ") - O(n log n)";
+
+    return solution;
+}
+
+std::string PalletPackingOptimizer::compareWithOptimal(const Solution &approximationSolution, const Solution &optimalSolution)
+{
+    std::stringstream comparison;
+
+    double profitAccuracy = (static_cast<double>(approximationSolution.totalProfit) / optimalSolution.totalProfit) * 100.0;
+    double speedup = (static_cast<double>(optimalSolution.executionTime) / approximationSolution.executionTime);
+
+    comparison << "Comparison with " << optimalSolution.algorithmName << ":\n";
+    comparison << "Optimal profit: " << optimalSolution.totalProfit << "\n";
+    comparison << "Approximation profit: " << approximationSolution.totalProfit << "\n";
+    comparison << "Accuracy: " << profitAccuracy << "%\n";
+    comparison << "Optimal execution time: " << optimalSolution.executionTime << " ms\n";
+    comparison << "Approximation execution time: " << approximationSolution.executionTime << " ms\n";
+    comparison << "Speedup: " << speedup << "x\n";
+
+    std::set<int> optimalPallets(optimalSolution.selectedPallets.begin(), optimalSolution.selectedPallets.end());
+    std::set<int> approxPallets(approximationSolution.selectedPallets.begin(), approximationSolution.selectedPallets.end());
+
+    int commonPallets = 0;
+    for (int id : approxPallets)
+    {
+        if (optimalPallets.count(id) > 0)
+        {
+            commonPallets++;
+        }
+    }
+
+    double palletMatchPercentage = (static_cast<double>(commonPallets) / optimalPallets.size()) * 100.0;
+    comparison << "Pallet selection match: " << palletMatchPercentage << "%\n";
+    comparison << "Common pallets: " << commonPallets << " out of " << optimalPallets.size() << "\n";
+
+    return comparison.str();
 }
