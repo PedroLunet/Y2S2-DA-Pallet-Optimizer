@@ -14,33 +14,71 @@ Solution PalletPackingOptimizer::solveBruteForce()
     auto startTime = std::chrono::high_resolution_clock::now();
 
     int n = pallets.size();
+
+    const int MAX_PALLETS = 30;
+    if (n > MAX_PALLETS)
+    {
+        std::cout << "Warning: Dataset contains " << n << " pallets, which exceeds the maximum for brute force algorithm." << std::endl;
+        std::cout << "This is not recommended and another algorithm is advised." << std::endl;
+    }
+
+    std::vector<bool> curCandidate(n, false);
+
+    bool foundSolution = false;
     int bestProfit = 0;
     int bestWeight = 0;
-    std::vector<int> bestSelection;
+    std::vector<bool> bestPalletSelection(n, false);
+    long long totalCombinations = 0;
 
-    long long totalCombinations = 1LL << n;
-
-    for (long long mask = 0; mask < totalCombinations; mask++)
+    while (true)
     {
+        totalCombinations++;
+
         int currentWeight = 0;
         int currentProfit = 0;
-        std::vector<int> currentSelection;
 
         for (int i = 0; i < n; i++)
         {
-            if (mask & (1LL << i))
+            if (curCandidate[i])
             {
                 currentWeight += pallets[i].weight;
                 currentProfit += pallets[i].profit;
-                currentSelection.push_back(pallets[i].id);
             }
         }
 
-        if (currentWeight <= capacity && currentProfit > bestProfit)
+        if (currentWeight <= capacity)
         {
-            bestProfit = currentProfit;
-            bestWeight = currentWeight;
-            bestSelection = currentSelection;
+            if (!foundSolution || currentProfit > bestProfit)
+            {
+                foundSolution = true;
+                bestProfit = currentProfit;
+                bestWeight = currentWeight;
+                bestPalletSelection = curCandidate;
+            }
+        }
+
+        int curIndex = 0;
+        while (curIndex < n && curCandidate[curIndex])
+        {
+            curIndex++;
+        }
+
+        if (curIndex == n)
+            break;
+
+        for (int i = 0; i < curIndex; i++)
+        {
+            curCandidate[i] = false;
+        }
+        curCandidate[curIndex] = true;
+    }
+
+    std::vector<int> selectedPalletIds;
+    for (int i = 0; i < n; i++)
+    {
+        if (bestPalletSelection[i])
+        {
+            selectedPalletIds.push_back(pallets[i].id);
         }
     }
 
@@ -49,7 +87,7 @@ Solution PalletPackingOptimizer::solveBruteForce()
 
     solution.totalProfit = bestProfit;
     solution.totalWeight = bestWeight;
-    solution.selectedPallets = bestSelection;
+    solution.selectedPallets = selectedPalletIds;
     solution.executionTime = duration.count();
 
     std::cout << "Brute Force Analysis:" << std::endl;
