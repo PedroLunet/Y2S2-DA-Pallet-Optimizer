@@ -67,30 +67,33 @@ Solution PalletPackingOptimizer::solveBacktracking()
 
     const std::vector<Pallet> &pallets = getPallets();
     int capacity = getTruckCapacity();
+    int n = pallets.size();
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
     int bestProfit = 0;
-    std::vector<int> bestSelection;
-    std::vector<int> currentSelection;
+    std::vector<bool> usedPallets(n, false);
+    std::vector<bool> currentPallets(n, false);
 
-    backtrack(pallets, capacity, 0, 0, 0, currentSelection, bestProfit, bestSelection);
+    backtrack(pallets, n, 0, capacity, 0, currentPallets, bestProfit, usedPallets);
 
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
 
+    std::vector<int> bestSelection;
     int bestWeight = 0;
-    for (int id : bestSelection)
+    int palletCount = 0;
+    for (int i = 0; i < n; i++)
     {
-        for (const auto &pallet : pallets)
+        if (usedPallets[i])
         {
-            if (pallet.id == id)
-            {
-                bestWeight += pallet.weight;
-                break;
-            }
+            bestSelection.push_back(pallets[i].id);
+            bestWeight += pallets[i].weight;
+            palletCount++;
         }
     }
+
+    std::cout << "Backtracking found optimal solution with " << palletCount << " pallets for maximum profit of " << bestProfit << std::endl;
 
     solution.totalProfit = bestProfit;
     solution.totalWeight = bestWeight;
@@ -101,36 +104,48 @@ Solution PalletPackingOptimizer::solveBacktracking()
 }
 
 void PalletPackingOptimizer::backtrack(
-    const std::vector<Pallet> &pallets, int capacity,
-    int index, int currentWeight, int currentProfit,
-    std::vector<int> &currentSelection,
-    int &bestProfit, std::vector<int> &bestSelection)
+    const std::vector<Pallet> &pallets, int n,
+    int curIndex, int maxWeight, int curProfit,
+    std::vector<bool> &curPallets,
+    int &maxProfit, std::vector<bool> &usedPallets)
 {
-
-    int n = pallets.size();
-
-    if (index == n)
+    if (curIndex == n)
     {
-        if (currentProfit > bestProfit)
+        int currentPalletCount = 0;
+        for (int i = 0; i < n; i++)
         {
-            bestProfit = currentProfit;
-            bestSelection = currentSelection;
+            if (curPallets[i])
+                currentPalletCount++;
+        }
+
+        int usedPalletCount = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (usedPallets[i])
+                usedPalletCount++;
+        }
+
+        if (curProfit > maxProfit || (curProfit == maxProfit && currentPalletCount < usedPalletCount))
+        {
+            maxProfit = curProfit;
+            for (int i = 0; i < n; i++)
+            {
+                usedPallets[i] = curPallets[i];
+            }
         }
         return;
     }
 
-    backtrack(pallets, capacity, index + 1, currentWeight, currentProfit,
-              currentSelection, bestProfit, bestSelection);
-
-    if (currentWeight + pallets[index].weight <= capacity)
+    if (maxWeight >= pallets[curIndex].weight)
     {
-        currentSelection.push_back(pallets[index].id);
-
-        backtrack(pallets, capacity, index + 1,
-                  currentWeight + pallets[index].weight,
-                  currentProfit + pallets[index].profit,
-                  currentSelection, bestProfit, bestSelection);
-
-        currentSelection.pop_back();
+        curPallets[curIndex] = true;
+        backtrack(pallets, n, curIndex + 1,
+                  maxWeight - pallets[curIndex].weight,
+                  curProfit + pallets[curIndex].profit,
+                  curPallets, maxProfit, usedPallets);
+        curPallets[curIndex] = false;
     }
+
+    backtrack(pallets, n, curIndex + 1, maxWeight, curProfit,
+              curPallets, maxProfit, usedPallets);
 }

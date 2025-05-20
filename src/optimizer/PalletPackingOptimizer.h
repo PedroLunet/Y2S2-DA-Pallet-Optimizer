@@ -92,18 +92,18 @@ private:
     /**
      * @brief Helper function for the backtracking algorithm
      * @param pallets The list of pallets
-     * @param capacity The truck capacity
-     * @param index The current pallet index being considered
-     * @param currentWeight The current accumulated weight
-     * @param currentProfit The current accumulated profit
-     * @param currentSelection Current selected pallets
-     * @param bestProfit Reference to track the best profit found so far
-     * @param bestSelection Reference to store the best selection found so far
+     * @param n The number of pallets
+     * @param curIndex The current pallet index being considered
+     * @param maxWeight The remaining weight capacity
+     * @param curProfit The current accumulated profit
+     * @param curPallets Current selected pallets (boolean array)
+     * @param maxProfit Reference to track the best profit found so far
+     * @param usedPallets Reference to store the best selection found so far (boolean array)
      */
-    void backtrack(const std::vector<Pallet> &pallets, int capacity,
-                   int index, int currentWeight, int currentProfit,
-                   std::vector<int> &currentSelection,
-                   int &bestProfit, std::vector<int> &bestSelection);
+    void backtrack(const std::vector<Pallet> &pallets, int n,
+                   int curIndex, int maxWeight, int curProfit,
+                   std::vector<bool> &curPallets,
+                   int &maxProfit, std::vector<bool> &usedPallets);
 };
 
 #endif // PALLETPACKINGOPTIMIZER_H
