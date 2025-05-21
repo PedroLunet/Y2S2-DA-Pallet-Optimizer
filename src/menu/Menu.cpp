@@ -207,8 +207,17 @@ void Menu::optionPicker()
     break;
 
     case 6:
-        std::cout << "Integer Linear Programming algorithm not implemented yet." << std::endl;
-        break;
+    {
+        if (optimizer.getCurrentDataset().empty())
+        {
+            std::cerr << "\nPlease load a dataset first." << std::endl;
+            break;
+        }
+        std::cout << "\nSolving using Integer Linear Programming (ILP)...\n" << std::endl;
+        Solution solution = optimizer.solveILP();
+        displaySolution(solution);
+    }
+    break;
 
     case 7:
     {

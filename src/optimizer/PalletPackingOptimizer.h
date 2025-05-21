@@ -124,6 +124,14 @@ public:
     Solution solveApproximation();
 
     /**
+     * @brief Solves the pallet packing problem using Integer Linear Programming (ILP)
+     * @return Solution structure containing the results
+     * @time_complexity Depends on the ILP solver (typically exponential in worst case)
+     * @space_complexity Depends on the ILP solver
+     */
+    Solution solveILP();
+
+    /**
      * @brief Compares the approximation algorithm with optimal solutions
      * @param approximationSolution The solution from the approximation algorithm
      * @param optimalSolution The optimal solution (from DP or Brute Force)
