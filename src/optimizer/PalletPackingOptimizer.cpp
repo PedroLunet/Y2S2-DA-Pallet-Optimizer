@@ -5,6 +5,9 @@
 #include <vector>
 #include <limits>
 #include <cmath>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
 
 Solution PalletPackingOptimizer::solveBruteForce()
 {
@@ -456,52 +459,86 @@ std::string PalletPackingOptimizer::compareWithOptimal(const Solution &approxima
 Solution PalletPackingOptimizer::solveILP()
 {
     Solution solution;
-    solution.algorithmName = "Integer Linear Programming (ILP)";
+    solution.algorithmName = "Integer Linear Programming (ILP) - Python PuLP";
 
     const std::vector<Pallet> &pallets = getPallets();
     int capacity = getTruckCapacity();
-    int n = pallets.size();
+    std::string currentDataset = getCurrentDataset();
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    int bestProfit = 0;
-    int bestWeight = 0;
-    std::vector<bool> bestSelection(n, false);
+    // Use relative paths from the build directory
+    // Assuming execution from src/cmake-build-debug or similar build directory
+    std::string truckFile = "../../datasets/TruckAndPallets_" + currentDataset + ".csv";
+    std::string palletsFile = "../../datasets/Pallets_" + currentDataset + ".csv";
+    std::string outputFile = "knapsack_output.txt";
+    std::string scriptPath = "../knapsack_solver.py";
 
-    std::function<void(int, int, int, std::vector<bool>&)> ilp;
-    ilp = [&](int idx, int curWeight, int curProfit, std::vector<bool>& selection) {
-        if (idx == n) {
-            if (curWeight <= capacity && curProfit > bestProfit) {
-                bestProfit = curProfit;
-                bestWeight = curWeight;
-                bestSelection = selection;
-            }
-            return;
-        }
+    // Construct Python command with relative paths (use quotes for safety)
+    std::string pythonCommand = "python3 \"" + scriptPath + "\" \"" + truckFile + "\" \"" + palletsFile + "\" \"" + outputFile + "\"";
 
-        if (curWeight + pallets[idx].weight <= capacity) {
-            selection[idx] = true;
-            ilp(idx + 1, curWeight + pallets[idx].weight, curProfit + pallets[idx].profit, selection);
-            selection[idx] = false;
-        }
-
-        ilp(idx + 1, curWeight, curProfit, selection);
-    };
-
-    std::vector<bool> selection(n, false);
-    ilp(0, 0, 0, selection);
-
-    std::vector<int> selectedPalletIds;
-    for (int i = 0; i < n; ++i) {
-        if (bestSelection[i]) selectedPalletIds.push_back(pallets[i].id);
+    // Execute Python script
+    int ret = system(pythonCommand.c_str());
+    if (ret != 0)
+    {
+        std::cerr << "Failed to run knapsack_solver.py (return code: " << ret << ")" << std::endl;
+        // Fallback to empty solution
+        solution.totalProfit = 0;
+        solution.totalWeight = 0;
+        solution.selectedPallets = {};
+        solution.executionTime = 0;
+        return solution;
     }
+
+    // Read results from output file
+    std::ifstream infile(outputFile);
+    if (!infile.is_open())
+    {
+        std::cerr << "Error opening " << outputFile << std::endl;
+        // Fallback to empty solution
+        solution.totalProfit = 0;
+        solution.totalWeight = 0;
+        solution.selectedPallets = {};
+        solution.executionTime = 0;
+        return solution;
+    }
+
+    int totalProfit, totalWeight;
+    std::string line;
+
+    // Read total profit
+    std::getline(infile, line);
+    totalProfit = std::stoi(line);
+
+    // Read total weight
+    std::getline(infile, line);
+    totalWeight = std::stoi(line);
+
+    // Read selected pallet IDs
+    std::vector<int> selectedPalletIds;
+    std::getline(infile, line);
+    if (!line.empty())
+    {
+        std::istringstream iss(line);
+        int palletId;
+        while (iss >> palletId)
+        {
+            selectedPalletIds.push_back(palletId);
+        }
+    }
+
+    infile.close();
+
+    // Clean up temporary output file
+    std::remove(outputFile.c_str());
 
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
 
-    solution.totalProfit = bestProfit;
-    solution.totalWeight = bestWeight;
+    solution.totalProfit = totalProfit;
+    solution.totalWeight = totalWeight;
     solution.selectedPallets = selectedPalletIds;
     solution.executionTime = duration.count();
+
     return solution;
 }
