@@ -213,9 +213,30 @@ void Menu::optionPicker()
             std::cerr << "\nPlease load a dataset first." << std::endl;
             break;
         }
-        std::cout << "\nSolving using Integer Linear Programming (ILP)...\n" << std::endl;
-        Solution solution = optimizer.solveILP();
-        displaySolution(solution);
+
+        int subOption;
+        std::cout << "\nSelect ILP method:" << std::endl;
+        std::cout << "1. ILP (Recursive Implementation)" << std::endl;
+        std::cout << "2. ILP (Python PuLP)" << std::endl;
+        std::cout << "Option: ";
+
+        std::cin >> subOption;
+
+        switch (subOption)
+        {
+        case 1:
+            std::cout << "\nSolving using Integer Linear Programming (Recursive)...\n" << std::endl;
+            displaySolution(optimizer.solveILP());
+            break;
+
+        case 2:
+            std::cout << "\nSolving using Integer Linear Programming (Python PuLP)...\n" << std::endl;
+            displaySolution(optimizer.solveILPPython());
+            break;
+
+        default:
+            std::cout << "Invalid option." << std::endl;
+        }
     }
     break;
 
@@ -230,7 +251,7 @@ void Menu::optionPicker()
         std::cout << "\nComparing all algorithms...\n"
                   << std::endl;
 
-        Solution dpSolution, greedyA, greedyB, approx;
+        Solution dpSolution, greedyA, greedyB, approx, ilpSolution, ilpPythonSolution;
         bool useExact = optimizer.getPallets().size() <= 30;
         Solution exactSolution;
 
@@ -251,6 +272,12 @@ void Menu::optionPicker()
 
         std::cout << "Running Approximation algorithm..." << std::endl;
         approx = optimizer.solveApproximation();
+
+        std::cout << "Running ILP (Recursive) algorithm..." << std::endl;
+        ilpSolution = optimizer.solveILP();
+
+        std::cout << "Running ILP (Python) algorithm..." << std::endl;
+        ilpPythonSolution = optimizer.solveILPPython();
 
         std::cout << "\n============================================= Algorithm Comparison =============================================" << std::endl;
         std::cout << std::left << std::setw(50) << "Algorithm"
@@ -293,6 +320,18 @@ void Menu::optionPicker()
                   << std::setw(20) << approx.executionTime
                   << std::setw(15) << approx.selectedPallets.size() << std::endl;
 
+        std::cout << std::left << std::setw(50) << ilpSolution.algorithmName
+                  << std::setw(15) << ilpSolution.totalProfit
+                  << std::setw(15) << ilpSolution.totalWeight
+                  << std::setw(20) << ilpSolution.executionTime
+                  << std::setw(15) << ilpSolution.selectedPallets.size() << std::endl;
+
+        std::cout << std::left << std::setw(50) << ilpPythonSolution.algorithmName
+                  << std::setw(15) << ilpPythonSolution.totalProfit
+                  << std::setw(15) << ilpPythonSolution.totalWeight
+                  << std::setw(20) << ilpPythonSolution.executionTime
+                  << std::setw(15) << ilpPythonSolution.selectedPallets.size() << std::endl;
+
         std::cout << "================================================================================================================" << std::endl;
 
         Solution &optimalSolution = useExact ? exactSolution : dpSolution;
@@ -301,10 +340,14 @@ void Menu::optionPicker()
         double greedyAAccuracy = static_cast<double>(greedyA.totalProfit) / optimalSolution.totalProfit * 100.0;
         double greedyBAccuracy = static_cast<double>(greedyB.totalProfit) / optimalSolution.totalProfit * 100.0;
         double approxAccuracy = static_cast<double>(approx.totalProfit) / optimalSolution.totalProfit * 100.0;
+        double ilpAccuracy = static_cast<double>(ilpSolution.totalProfit) / optimalSolution.totalProfit * 100.0;
+        double ilpPythonAccuracy = static_cast<double>(ilpPythonSolution.totalProfit) / optimalSolution.totalProfit * 100.0;
 
         std::cout << "Greedy-A accuracy: " << greedyAAccuracy << "%" << std::endl;
         std::cout << "Greedy-B accuracy: " << greedyBAccuracy << "%" << std::endl;
         std::cout << "Approximation accuracy: " << approxAccuracy << "%" << std::endl;
+        std::cout << "ILP (Recursive) accuracy: " << ilpAccuracy << "%" << std::endl;
+        std::cout << "ILP (Python) accuracy: " << ilpPythonAccuracy << "%" << std::endl;
 
         std::cout << "===========================================================" << std::endl;
     }

@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <functional>
 
 Solution PalletPackingOptimizer::solveBruteForce()
 {
@@ -457,6 +458,59 @@ std::string PalletPackingOptimizer::compareWithOptimal(const Solution &approxima
 }
 
 Solution PalletPackingOptimizer::solveILP()
+{
+    Solution solution;
+    solution.algorithmName = "Integer Linear Programming (ILP)";
+
+    const std::vector<Pallet> &pallets = getPallets();
+    int capacity = getTruckCapacity();
+    int n = pallets.size();
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    int bestProfit = 0;
+    int bestWeight = 0;
+    std::vector<bool> bestSelection(n, false);
+
+    std::function<void(int, int, int, std::vector<bool>&)> ilp;
+    ilp = [&](int idx, int curWeight, int curProfit, std::vector<bool>& selection) {
+        if (idx == n) {
+            if (curWeight <= capacity && curProfit > bestProfit) {
+                bestProfit = curProfit;
+                bestWeight = curWeight;
+                bestSelection = selection;
+            }
+            return;
+        }
+
+        if (curWeight + pallets[idx].weight <= capacity) {
+            selection[idx] = true;
+            ilp(idx + 1, curWeight + pallets[idx].weight, curProfit + pallets[idx].profit, selection);
+            selection[idx] = false;
+        }
+
+        ilp(idx + 1, curWeight, curProfit, selection);
+    };
+
+    std::vector<bool> selection(n, false);
+    ilp(0, 0, 0, selection);
+
+    std::vector<int> selectedPalletIds;
+    for (int i = 0; i < n; ++i) {
+        if (bestSelection[i]) selectedPalletIds.push_back(pallets[i].id);
+    }
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+    solution.totalProfit = bestProfit;
+    solution.totalWeight = bestWeight;
+    solution.selectedPallets = selectedPalletIds;
+    solution.executionTime = duration.count();
+    return solution;
+}
+
+Solution PalletPackingOptimizer::solveILPPython()
 {
     Solution solution;
     solution.algorithmName = "Integer Linear Programming (ILP) - Python PuLP";

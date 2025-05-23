@@ -124,12 +124,20 @@ public:
     Solution solveApproximation();
 
     /**
-     * @brief Solves the pallet packing problem using Integer Linear Programming (ILP)
+     * @brief Solves the pallet packing problem using Integer Linear Programming (ILP) with recursive approach
+     * @return Solution structure containing the results
+     * @time_complexity O(2^n) where n is the number of pallets
+     * @space_complexity O(n) for recursion stack and storing the best solution
+     */
+    Solution solveILP();
+
+    /**
+     * @brief Solves the pallet packing problem using Integer Linear Programming (ILP) with Python PuLP
      * @return Solution structure containing the results
      * @time_complexity Depends on the ILP solver (typically exponential in worst case)
      * @space_complexity Depends on the ILP solver
      */
-    Solution solveILP();
+    Solution solveILPPython();
 
     /**
      * @brief Compares the approximation algorithm with optimal solutions
