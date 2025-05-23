@@ -9,6 +9,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <functional>
+#include <iomanip>
 
 Solution PalletPackingOptimizer::solveBruteForce()
 {
@@ -595,4 +596,194 @@ Solution PalletPackingOptimizer::solveILPPython()
     solution.executionTime = duration.count();
 
     return solution;
+}
+
+bool PalletPackingOptimizer::exportPerformanceData(const std::vector<Solution> &solutions, const std::string &datasetName, const std::string &filename)
+{
+    std::ofstream outFile(filename);
+    if (!outFile.is_open())
+    {
+        std::cerr << "Error: Could not create performance data file: " << filename << std::endl;
+        return false;
+    }
+
+    // Start JSON object
+    outFile << "{\n";
+    outFile << "  \"dataset\": \"" << datasetName << "\",\n";
+    outFile << "  \"capacity\": " << getTruckCapacity() << ",\n";
+    outFile << "  \"num_pallets\": " << getPallets().size() << ",\n";
+    outFile << "  \"algorithms\": [\n";
+
+    // Export each algorithm's performance data
+    for (size_t i = 0; i < solutions.size(); ++i)
+    {
+        const Solution &sol = solutions[i];
+        outFile << "    {\n";
+        outFile << "      \"name\": \"" << sol.algorithmName << "\",\n";
+        outFile << "      \"execution_time\": " << sol.executionTime << ",\n";
+        outFile << "      \"total_profit\": " << sol.totalProfit << ",\n";
+        outFile << "      \"total_weight\": " << sol.totalWeight << ",\n";
+        outFile << "      \"pallets_used\": " << sol.selectedPallets.size() << ",\n";
+        outFile << "      \"selected_pallets\": [";
+        
+        for (size_t j = 0; j < sol.selectedPallets.size(); ++j)
+        {
+            outFile << sol.selectedPallets[j];
+            if (j < sol.selectedPallets.size() - 1) outFile << ", ";
+        }
+        
+        outFile << "]\n";
+        outFile << "    }";
+        if (i < solutions.size() - 1) outFile << ",";
+        outFile << "\n";
+    }
+
+    outFile << "  ],\n";
+
+    // Calculate and export accuracy data if we have optimal solutions
+    if (!solutions.empty())
+    {
+        // Find optimal solution (usually DP or Backtracking)
+        int optimalProfit = 0;
+        for (const auto &sol : solutions)
+        {
+            if (sol.totalProfit > optimalProfit)
+            {
+                optimalProfit = sol.totalProfit;
+            }
+        }
+
+        outFile << "  \"accuracy\": {\n";
+        
+        bool first = true;
+        for (const auto &sol : solutions)
+        {
+            // Calculate accuracy for approximation algorithms
+            if (sol.algorithmName.find("Greedy") != std::string::npos || 
+                sol.algorithmName.find("Approximation") != std::string::npos ||
+                sol.algorithmName.find("ILP") != std::string::npos)
+            {
+                if (!first) outFile << ",\n";
+                double accuracy = (static_cast<double>(sol.totalProfit) / optimalProfit) * 100.0;
+                std::string algoName = sol.algorithmName.substr(0, sol.algorithmName.find(" - "));
+                outFile << "    \"" << algoName << "\": " << std::fixed << std::setprecision(2) << accuracy;
+                first = false;
+            }
+        }
+        
+        outFile << "\n  }\n";
+    }
+
+    outFile << "}\n";
+    outFile.close();
+
+    std::cout << "Performance data exported to: " << filename << std::endl;
+    return true;
+}
+
+bool PalletPackingOptimizer::generatePerformanceVisualization(const std::string &datasetName)
+{
+    std::string dataFile = "performance_data_" + datasetName + ".json";
+    std::string pythonScript = "performance_visualizer.py";
+    
+    // Check if performance data file exists
+    std::ifstream testFile(dataFile);
+    if (!testFile.good())
+    {
+        std::cerr << "Error: Performance data file not found: " << dataFile << std::endl;
+        std::cerr << "Please run algorithm comparison first to generate performance data." << std::endl;
+        return false;
+    }
+    testFile.close();
+
+    // Check if Python script exists
+    std::ifstream scriptFile(pythonScript);
+    if (!scriptFile.good())
+    {
+        std::cerr << "Error: Python visualization script not found: " << pythonScript << std::endl;
+        return false;
+    }
+    scriptFile.close();
+
+    // Execute Python visualization script
+    std::string pythonCommand = "python3 " + pythonScript + " " + dataFile + " " + datasetName;
+    
+    std::cout << "Generating performance visualizations..." << std::endl;
+    std::cout << "Executing: " << pythonCommand << std::endl;
+    
+    int result = system(pythonCommand.c_str());
+    
+    if (result == 0)
+    {
+        std::cout << "Performance visualizations generated successfully!" << std::endl;
+        std::cout << "Check the 'performance_graphs' directory for generated charts." << std::endl;
+        return true;
+    }
+    else
+    {
+        std::cerr << "Error generating visualizations. Return code: " << result << std::endl;
+        std::cerr << "Make sure Python3 and matplotlib are installed:" << std::endl;
+        std::cerr << "  pip3 install matplotlib numpy" << std::endl;
+        return false;
+    }
+}
+
+std::vector<Solution> PalletPackingOptimizer::runFullPerformanceAnalysis()
+{
+    std::vector<Solution> solutions;
+    
+    if (getCurrentDataset().empty())
+    {
+        std::cerr << "Error: No dataset loaded. Please load a dataset first." << std::endl;
+        return solutions;
+    }
+
+    std::cout << "\n========== Running Full Performance Analysis ==========" << std::endl;
+    std::cout << "Dataset: " << getCurrentDataset() << std::endl;
+    std::cout << "Number of pallets: " << getPallets().size() << std::endl;
+    std::cout << "Truck capacity: " << getTruckCapacity() << std::endl;
+    std::cout << "=======================================================" << std::endl;
+
+    bool useExact = getPallets().size() <= 30;
+
+    // Run exact algorithms if dataset is small enough
+    if (useExact)
+    {
+        std::cout << "\nRunning Brute Force algorithm..." << std::endl;
+        solutions.push_back(solveBruteForce());
+        
+        std::cout << "Running Backtracking algorithm..." << std::endl;
+        solutions.push_back(solveBacktracking());
+    }
+    else
+    {
+        std::cout << "\nSkipping exact algorithms (dataset too large: " << getPallets().size() << " pallets)" << std::endl;
+    }
+
+    // Always run these algorithms
+    std::cout << "Running Dynamic Programming algorithm..." << std::endl;
+    solutions.push_back(solveDynamicProgramming());
+
+    std::cout << "Running Greedy-A algorithm..." << std::endl;
+    solutions.push_back(solveGreedyA());
+
+    std::cout << "Running Greedy-B algorithm..." << std::endl;
+    solutions.push_back(solveGreedyB());
+
+    std::cout << "Running Approximation algorithm..." << std::endl;
+    solutions.push_back(solveApproximation());
+
+    std::cout << "Running ILP (Recursive) algorithm..." << std::endl;
+    solutions.push_back(solveILP());
+
+    std::cout << "Running ILP (Python) algorithm..." << std::endl;
+    solutions.push_back(solveILPPython());
+
+    // Export performance data
+    std::string dataFile = "performance_data_" + getCurrentDataset() + ".json";
+    exportPerformanceData(solutions, getCurrentDataset(), dataFile);
+
+    std::cout << "\nPerformance analysis complete!" << std::endl;
+    
+    return solutions;
 }

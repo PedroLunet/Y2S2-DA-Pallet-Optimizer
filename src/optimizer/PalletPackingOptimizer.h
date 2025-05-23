@@ -147,6 +147,28 @@ public:
      */
     std::string compareWithOptimal(const Solution &approximationSolution, const Solution &optimalSolution);
 
+    /**
+     * @brief Exports performance data from multiple algorithm solutions to JSON format
+     * @param solutions Vector of solutions from different algorithms
+     * @param datasetName Name of the current dataset
+     * @param filename Output filename for the JSON data
+     * @return True if export was successful, false otherwise
+     */
+    bool exportPerformanceData(const std::vector<Solution> &solutions, const std::string &datasetName, const std::string &filename);
+
+    /**
+     * @brief Generates performance visualization graphs using Python script
+     * @param datasetName Name of the dataset used for labeling
+     * @return True if visualization generation was successful, false otherwise
+     */
+    bool generatePerformanceVisualization(const std::string &datasetName);
+
+    /**
+     * @brief Runs all algorithms and generates comprehensive performance analysis with visualizations
+     * @return Vector of solutions from all algorithms
+     */
+    std::vector<Solution> runFullPerformanceAnalysis();
+
 private:
     /**
      * @brief Helper function for the backtracking algorithm

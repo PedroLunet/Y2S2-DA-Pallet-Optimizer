@@ -28,8 +28,10 @@ void Menu::mainMenu()
     std::cout << "6. Solve using Integer Linear Programming" << std::endl;
     std::cout << "" << std::endl;
     std::cout << "7. Compare All Algorithms" << std::endl;
+    std::cout << "8. Full Performance Analysis with Visualization" << std::endl;
+    std::cout << "9. Generate Performance Graphs" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << "8. Exit" << std::endl;
+    std::cout << "10. Exit" << std::endl;
     std::cout << "" << std::endl;
     std::cout << "Please select an option: ";
 
@@ -354,6 +356,83 @@ void Menu::optionPicker()
     break;
 
     case 8:
+    {
+        if (optimizer.getCurrentDataset().empty())
+        {
+            std::cerr << "\nPlease load a dataset first." << std::endl;
+            break;
+        }
+
+        std::cout << "\nRunning Full Performance Analysis with Visualization...\n" << std::endl;
+        
+        std::vector<Solution> solutions = optimizer.runFullPerformanceAnalysis();
+        
+        if (!solutions.empty())
+        {
+            // Display summary table
+            std::cout << "\n============================================= Performance Summary =============================================" << std::endl;
+            std::cout << std::left << std::setw(50) << "Algorithm"
+                      << std::setw(15) << "Total Profit"
+                      << std::setw(15) << "Total Weight"
+                      << std::setw(20) << "Execution Time (ms)"
+                      << std::setw(15) << "Pallets Used" << std::endl;
+            std::cout << "----------------------------------------------------------------------------------------------------------------" << std::endl;
+
+            for (const auto &sol : solutions)
+            {
+                std::cout << std::left << std::setw(50) << sol.algorithmName
+                          << std::setw(15) << sol.totalProfit
+                          << std::setw(15) << sol.totalWeight
+                          << std::setw(20) << sol.executionTime
+                          << std::setw(15) << sol.selectedPallets.size() << std::endl;
+            }
+            std::cout << "================================================================================================================" << std::endl;
+
+            // Generate visualizations
+            std::cout << "\nGenerating performance visualizations..." << std::endl;
+            bool success = optimizer.generatePerformanceVisualization(datasetNumber);
+            
+            if (success)
+            {
+                std::cout << "\n✓ Performance analysis and visualization completed successfully!" << std::endl;
+                std::cout << "Check the 'performance_graphs' directory for generated charts." << std::endl;
+            }
+            else
+            {
+                std::cout << "\n⚠ Performance analysis completed, but visualization generation failed." << std::endl;
+                std::cout << "Performance data has been exported to JSON format." << std::endl;
+            }
+        }
+    }
+    break;
+
+    case 9:
+    {
+        if (optimizer.getCurrentDataset().empty())
+        {
+            std::cerr << "\nPlease load a dataset first." << std::endl;
+            break;
+        }
+
+        std::cout << "\nGenerating performance graphs for Dataset " << datasetNumber << "...\n" << std::endl;
+        
+        bool success = optimizer.generatePerformanceVisualization(datasetNumber);
+        
+        if (success)
+        {
+            std::cout << "\n✓ Performance visualizations generated successfully!" << std::endl;
+            std::cout << "Check the 'performance_graphs' directory for charts." << std::endl;
+        }
+        else
+        {
+            std::cout << "\n⚠ Failed to generate visualizations." << std::endl;
+            std::cout << "Make sure you have run the performance analysis first (option 8)" << std::endl;
+            std::cout << "and that Python3 with matplotlib is installed." << std::endl;
+        }
+    }
+    break;
+
+    case 10:
         std::cout << "Exiting the program. Goodbye!" << std::endl;
         exit(0);
         break;
