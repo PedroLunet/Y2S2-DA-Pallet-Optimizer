@@ -1,11 +1,24 @@
-# Pallet Packing Optimization - Knapsack Problem Solver
+# 📦 Pallet Packing Optimization - Knapsack Problem Solver
 
-> **Design of Algorithms Project 2 - Spring 2025**  
-> Developed by Group 2 - Class 15
+![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![CMake](https://img.shields.io/badge/CMake-064F8C?style=for-the-badge&logo=cmake&logoColor=white)
+![Algorithm](https://img.shields.io/badge/Algorithm-Dynamic_Programming-red?style=for-the-badge)
+![Optimization](https://img.shields.io/badge/Optimization-Knapsack-green?style=for-the-badge)
 
-A comprehensive C++ implementation of various algorithms to solve the **Pallet Packing Optimization Problem** (a variant of the 0-1 Knapsack Problem). This project implements and compares multiple algorithmic approaches, from exact solutions to approximation algorithms, with performance analysis and visualization tools.
+A sophisticated pallet packing optimization tool developed in C++ for the Design of Algorithms (DA) course at FEUP. This project demonstrates advanced algorithmic implementations for solving the 0-1 Knapsack Problem variant, featuring multiple optimization approaches and comprehensive performance analysis.
 
-## Problem Description
+## 🌐 About
+
+The Pallet Packing Optimization Tool is a comprehensive solution for optimizing cargo loading in transportation scenarios. Built with performance and algorithm diversity in mind, it offers:
+
+- Multiple algorithmic approaches from exact to approximation solutions
+- Real-time performance comparison and analysis
+- Comprehensive visualization and reporting capabilities
+- Interactive command-line interface for seamless user experience
+- Python integration for advanced mathematical programming
+- Scalable solutions for datasets of varying complexity
+
+## 🎯 Problem Description
 
 The **Pallet Packing Problem** involves optimizing the loading of pallets into a truck with limited weight capacity. Each pallet has:
 
@@ -16,89 +29,104 @@ The **Pallet Packing Problem** involves optimizing the loading of pallets into a
 
 This is a classic variant of the **0-1 Knapsack Problem** where each pallet can either be selected (1) or not selected (0), but cannot be partially selected.
 
-## Features
+## 🚀 Features
 
-### Algorithms Implemented
+### 🛠️ Optimization Capabilities
 
-- **Exact Algorithms**:
+- **Exact Solutions**: Brute force and backtracking for guaranteed optimal results
+- **Dynamic Programming**: Efficient optimal solutions with O(n×W) complexity
+- **Approximation Algorithms**: Fast greedy approaches with high accuracy ratios
+- **Integer Linear Programming**: Advanced mathematical programming with PuLP
+- **Hybrid Approaches**: Combined strategies for optimal performance-accuracy balance
 
-  - **Brute Force** - Exhaustive search `O(2^n)`
-  - **Backtracking** - Optimized search with pruning `O(2^n)` with early termination
-  - **Dynamic Programming** - Optimal solution `O(n×W)`
-  - **Integer Linear Programming (ILP)** - Both recursive and Python PuLP implementations
+### 📊 Advanced Algorithms
 
-- **Approximation Algorithms**:
-  - **Greedy-A** - Profit-to-weight ratio based `O(n log n)`
-  - **Greedy-B** - Profit value based `O(n log n)`
-  - **Combined Approximation** - Best of both greedy approaches
+- **Brute Force Algorithm**: Complete enumeration with O(2^n) complexity for small datasets
+- **Backtracking with Pruning**: Optimized search with early termination strategies
+- **Dynamic Programming**: Bottom-up approach with optimal substructure exploitation
+- **Greedy Strategies**: Profit-to-weight and pure profit maximization heuristics
+- **Mathematical Programming**: Recursive and Python-based ILP implementations
 
-### Analysis & Visualization Tools
+### 💾 Data Management & Analysis
 
-- **Performance Comparison** - Execution time, profit, weight analysis
-- **Accuracy Metrics** - Compare approximations with optimal solutions
-- **Visual Charts** - Matplotlib-generated performance graphs
-- **Detailed Reports** - JSON export of performance data
+- **CSV Integration**: Efficient parsing of pallet and truck capacity data
+- **Performance Metrics**: Comprehensive execution time and accuracy tracking
+- **Visualization Tools**: Matplotlib-generated charts and performance graphs
+- **JSON Reporting**: Detailed export of algorithm performance and results
+- **Dataset Validation**: Robust error handling and data integrity verification
 
-## Project Structure
+### 🎯 User Interface & Tools
+
+- **Interactive Menu**: Intuitive command-line interface for all operations
+- **Real-time Analysis**: Live algorithm execution and performance monitoring
+- **Comparative Studies**: Side-by-side algorithm performance evaluation
+- **Python Integration**: Seamless integration with visualization and ILP tools
+
+## 🛠 Technical Implementation
+
+### Tech Stack
+
+- **Language**: C++17 with modern STL features
+- **Build System**: CMake for cross-platform compilation
+- **Mathematical Programming**: Python PuLP for ILP solutions
+- **Visualization**: Matplotlib and NumPy for performance analysis
+- **Documentation**: Comprehensive inline documentation and analysis
+
+### System Architecture
 
 ```
-src/
-├── main.cpp                     # Main entry point
-├── menu/                        # User interface
-│   ├── Menu.h                   # Menu class declaration
-│   └── Menu.cpp                 # Interactive console menu
-├── optimizer/                   # Core algorithms
-│   ├── PalletPackingOptimizer.h # Algorithm declarations
-│   └── PalletPackingOptimizer.cpp # Algorithm implementations
-├── data/                        # Data management
-│   ├── DataManager.h            # Singleton data handler
-│   └── DataManager.cpp          # Dataset loading & management
-├── knapsack_solver.py           # Python ILP solver (PuLP)
-├── performance_visualizer.py    # Visualization generator
-└── CMakeLists.txt               # Build configuration
-
-datasets/                        # Test datasets
-├── TruckAndPallets_XX.csv       # Truck capacity & pallet count
-├── Pallets_XX.csv               # Pallet data (ID, weight, profit)
-└── OptimalSolution_XX.txt       # Known optimal solutions
+┌─────────────────────┐
+│   Menu Interface    │
+├─────────────────────┤
+│ Algorithm Optimizer │
+├─────────────────────┤
+│   Data Manager      │
+├─────────────────────┤
+│ Performance Analyzer│
+├─────────────────────┤
+│   Dataset Files     │
+└─────────────────────┘
 ```
 
-## Build & Installation
+### Core Components
+
+- **PalletPackingOptimizer**: Main algorithm implementation engine
+- **DataManager**: Singleton pattern for efficient dataset management
+- **Menu System**: User-friendly interface for algorithm selection and execution
+- **Performance Analyzer**: Comprehensive timing and accuracy measurement tools
+- **Visualization Engine**: Python-based chart generation and analysis tools
+
+## 🏗 Setup and Installation
 
 ### Prerequisites
 
-- **C++ Compiler**: GCC 9+ or Clang 10+ with C++17 support
-- **CMake**: Version 3.15 or higher
-- **Python 3.7+** (for visualization and PuLP solver)
+- **C++17 compatible compiler** (GCC 9+, Clang 10+, MSVC 2019+)
+- **CMake 3.15** or higher
+- **Python 3.7+** (for visualization and ILP solver)
 - **Python Packages**: `matplotlib`, `numpy`, `pulp`
 
-### Build Instructions
+### Quick Start
 
-1. **Clone the repository**:
+```bash
+# Clone the repository
+git clone git@github.com:PedroLunet/Y2S2-DA-Pallet-Optimizer.git
+cd Y2S2-DA-Pallet-Optimizer
 
-   ```bash
-   git clone <repository-url>
-   cd proj2
-   ```
+# Install Python dependencies
+pip install matplotlib numpy pulp
 
-2. **Install Python dependencies**:
+# Create build directory
+mkdir build && cd build
 
-   ```bash
-   pip install matplotlib numpy pulp
-   ```
+# Configure with CMake
+cmake ../src
 
-3. **Build the project**:
+# Build the project
+make
 
-   ```bash
-   mkdir build && cd build
-   cmake ../src
-   make
-   ```
-
-4. **Run the application**:
-   ```bash
-   ./project2_da_leic
-   ```
+# Run the application
+./project2_da_leic
+```
 
 ### Alternative Build (CLion/IDE)
 
@@ -106,9 +134,46 @@ datasets/                        # Test datasets
 - CMake should automatically configure the project
 - Build and run using the IDE's interface
 
-## Usage
+### Manual Build (without CMake)
 
-### Interactive Menu System
+```bash
+# Navigate to source directory
+cd src
+
+# Compile manually
+g++ -std=c++17 -O2 -o pallet_optimizer main.cpp menu/Menu.cpp \
+    data/DataManager.cpp optimizer/PalletPackingOptimizer.cpp
+
+# Run the executable
+./pallet_optimizer
+```
+
+## 📁 Project Structure
+
+```
+Y2S2-DA-Pallet-Optimizer/
+├── src/                          # Source code
+│   ├── main.cpp                 # Application entry point
+│   ├── CMakeLists.txt           # Build configuration
+│   ├── optimizer/               # Algorithm implementations
+│   │   ├── PalletPackingOptimizer.h
+│   │   └── PalletPackingOptimizer.cpp
+│   ├── menu/                    # User interface
+│   │   ├── Menu.h
+│   │   └── Menu.cpp
+│   ├── data/                    # Data management
+│   │   ├── DataManager.h
+│   │   └── DataManager.cpp
+│   ├── knapsack_solver.py       # Python ILP solver
+│   └── performance_visualizer.py # Visualization tools
+├── datasets/                     # Test datasets
+│   ├── TruckAndPallets_XX.csv   # Truck capacity data
+│   ├── Pallets_XX.csv           # Pallet specifications
+│   └── OptimalSolution_XX.txt   # Known optimal solutions
+├── docs/                        # Documentation
+│   └── Doxyfile.in             # Doxygen configuration
+└── README.md                    # Project documentation
+```
 
 The application provides an intuitive menu-driven interface:
 
@@ -124,36 +189,40 @@ The application provides an intuitive menu-driven interface:
 
 ### Example Workflow
 
-1. **Load a dataset** (e.g., Dataset 01)
-2. **View dataset information** to understand the problem size
-3. **Run performance analysis** to compare all algorithms
-4. **Generate visualizations** to analyze results
+1. **Load a dataset** (e.g., Dataset 01) to begin analysis
+2. **View dataset information** to understand problem complexity
+3. **Run performance analysis** to compare all implemented algorithms
+4. **Generate visualizations** to analyze results and performance trends
 
 ### Command Line Usage
 
 ```bash
-# Run specific dataset analysis
+# Run the main application
 ./project2_da_leic
 
-# Generate Python visualizations
+# Generate Python visualizations independently
 python3 performance_visualizer.py
 
-# Run PuLP solver independently
+# Run PuLP ILP solver directly
 python3 knapsack_solver.py
 ```
 
-## Performance Analysis
+## ⚡ Performance & Complexity
 
-### Algorithm Complexity Comparison
+### Algorithm Complexities
 
-| Algorithm           | Time Complexity | Space Complexity | Best Use Case                       |
-| ------------------- | --------------- | ---------------- | ----------------------------------- |
-| Brute Force         | O(2^n)          | O(n)             | Small datasets (n ≤ 20)             |
-| Backtracking        | O(2^n)          | O(n)             | Small-medium datasets (n ≤ 30)      |
-| Dynamic Programming | O(n×W)          | O(n×W)           | Large datasets, reasonable capacity |
-| Greedy-A            | O(n log n)      | O(n)             | Quick approximations                |
-| Greedy-B            | O(n log n)      | O(n)             | Quick approximations                |
-| ILP                 | Exponential     | Variable         | Exact solutions, medium datasets    |
+- **Brute Force Algorithm**: O(2^n) - Complete enumeration for small datasets
+- **Backtracking with Pruning**: O(2^n) - Optimized with early termination
+- **Dynamic Programming**: O(n×W) - Optimal polynomial-time solution
+- **Greedy Algorithms**: O(n log n) - Fast approximation with sorting
+- **Integer Linear Programming**: Exponential - Exact solutions for medium datasets
+
+### Memory Efficiency
+
+- Efficient data structure design for minimal memory overhead
+- Optimized dynamic programming with space complexity optimization
+- Smart memory management for large dataset processing
+- Template-based implementation for type flexibility
 
 ### Visualization Features
 
@@ -162,7 +231,7 @@ python3 knapsack_solver.py
 - **Accuracy Metrics**: Approximation vs optimal solution ratios
 - **Performance vs Dataset Size**: Scalability analysis
 
-## Sample Results
+### Sample Results
 
 For a typical dataset with 15 pallets:
 
@@ -171,35 +240,42 @@ For a typical dataset with 15 pallets:
 - **Backtracking**: Optimal solution in ~15ms
 - **Brute Force**: Optimal solution in ~500ms
 
-## Technical Details
+## 🎯 Key Features Implemented
 
-### Core Classes
+- ✅ Complete knapsack optimization system with multiple algorithms
+- ✅ Dynamic programming optimal solution implementation
+- ✅ Greedy approximation algorithms with accuracy analysis
+- ✅ Integer Linear Programming with Python PuLP integration
+- ✅ Comprehensive performance analysis and comparison tools
+- ✅ Advanced visualization with matplotlib charts
+- ✅ Interactive command-line interface with menu system
+- ✅ Robust error handling and dataset validation
+- ✅ JSON export for detailed performance reporting
+- ✅ Cross-platform compatibility and build system
 
-- **`PalletPackingOptimizer`**: Main algorithm implementation class
-- **`DataManager`**: Singleton pattern for dataset management
-- **`Menu`**: User interface and interaction handling
-- **`Solution`**: Structure containing algorithm results
+## 🏆 Learning Outcomes
 
-### Key Features
+Through this project, we gained practical experience with:
 
-- **Memory Efficient**: Optimized data structures for large datasets
-- **Modular Design**: Easy to add new algorithms
-- **Comprehensive Testing**: Multiple datasets with known optimal solutions
-- **Cross-Platform**: Compatible with Linux, macOS, and Windows
+- **Advanced Algorithms**: Implementation of dynamic programming and optimization techniques
+- **Algorithm Analysis**: Complexity analysis and performance comparison methodologies
+- **Software Engineering**: Modern C++ practices and modular design patterns
+- **Mathematical Programming**: Integration of ILP solvers and optimization libraries
+- **Data Visualization**: Python-based chart generation and performance analysis
+- **Project Management**: Team collaboration and version control with Git
 
-## Documentation
+## 👥 Development Team
 
-Comprehensive documentation is available via Doxygen:
-
-- Open `docs/html/index.html` in browser
-- Generated from source code comments
-- Includes class diagrams and API reference
-
-## Authors
+This project was developed by Group 2 - Class 15:
 
 - Pedro Lunet
 - [Pedro André Freitas Monteiro](https://github.com/pedroafmonteiro)
 
-## License
+## 📜 Course Information
 
-This project is developed for academic purposes as part of the Design of Algorithms course.
+Developed for the Design of Algorithms (DA) course - Project 2, Spring 2025  
+Faculty of Engineering, University of Porto (FEUP)
+
+---
+
+_Build and run the application to explore advanced pallet packing optimization with multiple algorithmic approaches. The system demonstrates efficient implementations suitable for real-world cargo loading scenarios._
