@@ -109,8 +109,8 @@ This is a classic variant of the **0-1 Knapsack Problem** where each pallet can 
 
 ```bash
 # Clone the repository
-git clone git@github.com:PedroLunet/Y2S2-DA-Pallet-Optimizer.git
-cd Y2S2-DA-Pallet-Optimizer
+git clone git@github.com:PedroLunet/Y2S2-DA-Path-Planning-Tool.git
+cd Y2S2-DA-Path-Planning-Tool
 
 # Install Python dependencies
 pip install matplotlib numpy pulp
@@ -151,7 +151,7 @@ g++ -std=c++17 -O2 -o pallet_optimizer main.cpp menu/Menu.cpp \
 ## 📁 Project Structure
 
 ```
-Y2S2-DA-Pallet-Optimizer/
+Y2S2-DA-Path-Planning-Tool/
 ├── src/                          # Source code
 │   ├── main.cpp                 # Application entry point
 │   ├── CMakeLists.txt           # Build configuration
