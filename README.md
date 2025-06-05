@@ -110,7 +110,7 @@ This is a classic variant of the **0-1 Knapsack Problem** where each pallet can 
 ```bash
 # Clone the repository
 git clone git@github.com:PedroLunet/Y2S2-DA-Path-Planning-Tool.git
-cd Y2S2-DA-Path-Planning-Tool
+cd Y2S2-DA-Pallet-Optimizer
 
 # Install Python dependencies
 pip install matplotlib numpy pulp
