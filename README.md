@@ -7,6 +7,8 @@
 
 A sophisticated pallet packing optimization tool developed in C++ for the Design of Algorithms (DA) course at FEUP. This project demonstrates advanced algorithmic implementations for solving the 0-1 Knapsack Problem variant, featuring multiple optimization approaches and comprehensive performance analysis.
 
+## 🎓 Grade: 19.8/20
+
 ## 🌐 About
 
 The Pallet Packing Optimization Tool is a comprehensive solution for optimizing cargo loading in transportation scenarios. Built with performance and algorithm diversity in mind, it offers:
